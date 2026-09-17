@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dealer Evaluation – Microservices Portal</title>
+  <meta name="description" content="Dealer Evaluation and Product Pricing Microservices Dashboard - Cloud Engineering Final Project">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- ===================================================================== -->
+  <!-- IBM CLOUD CODE ENGINE API URL PLACEHOLDERS                             -->
+  <!-- ===================================================================== -->
+  <!-- INSTRUCTIONS FOR SUBMISSION & DEPLOYMENT:                             -->
+  <!-- When deployed to IBM Cloud Code Engine, replace the localhost URLs   -->
+  <!-- below with your actual deployed Code Engine application endpoints.    -->
+  <!-- Example:                                                             -->
+  <!--   window.PRODUCT_DETAILS_API_URL = "https://product-details.xxxx.codeengine.appdomain.cloud"; -->
+  <!--   window.DEALER_PRICING_API_URL  = "https://dealer-pricing.xxxx.codeengine.appdomain.cloud";  -->
+  <!-- ===================================================================== -->
+  <script>
+    window.PRODUCT_DETAILS_API_URL = "http://localhost:5000";
+    window.DEALER_PRICING_API_URL = "http://localhost:5001";
+  </script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <h1 class="brand-title">Dealer Evaluation Portal</h1>
+          <span class="brand-subtitle">Cloud Microservices Lab</span>
+        </div>
+      </div>
+
+      <div class="nav-status-group">
+        <div class="service-pill" id="pill-product-service" title="Product Details Microservice status">
+          <span class="status-dot dot-unknown"></span>
+          <span class="pill-label">Product API: <strong id="status-product-text">Checking...</strong></span>
+        </div>
+        <div class="service-pill" id="pill-dealer-service" title="Dealer Pricing Microservice status">
+          <span class="status-dot dot-unknown"></span>
+          <span class="pill-label">Pricing API: <strong id="status-pricing-text">Checking...</strong></span>
+        </div>
+        <button id="btn-refresh-status" class="btn-icon" title="Refresh API Connections">🔄</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="main-layout">
+
+    <!-- Hero / Control Bar -->
+    <section class="control-panel">
+      <div class="panel-header">
+        <h2>Evaluate Dealer Quotes & Pricing</h2>
+        <p>Select a product to view authorized suppliers, compare dealer prices, and discover optimal pricing offers.</p>
+      </div>
+
+      <div class="selection-grid">
+        <!-- Step 1: Product Selection Dropdown -->
+        <div class="form-group">
+          <label for="product-select" class="form-label">
+            <span class="step-num">1</span> Select Product
+          </label>
+          <div class="select-wrapper">
+            <select id="product-select" class="custom-select" disabled>
+              <option value="" selected>Loading products from API...</option>
+            </select>
+          </div>
+          <span class="form-helper" id="product-helper">Connecting to Product Details microservice...</span>
+        </div>
+
+        <!-- Step 2: Dealer Selection Dropdown -->
+        <div class="form-group">
+          <label for="dealer-select" class="form-label">
+            <span class="step-num">2</span> Select Dealer / View
+          </label>
+          <div class="select-wrapper">
+            <select id="dealer-select" class="custom-select" disabled>
+              <option value="" selected>-- Select a product first --</option>
+            </select>
+          </div>
+          <span class="form-helper" id="dealer-helper">Select a product to populate authorized dealers</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global Alert / Status Notification -->
+    <div id="alert-banner" class="alert-banner hidden">
+      <div class="alert-icon" id="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <div class="alert-title" id="alert-title">Notification</div>
+        <div class="alert-message" id="alert-message">Status details here</div>
+      </div>
+      <button class="alert-close" id="btn-close-alert">&times;</button>
+    </div>
+
+    <!-- Product Summary Card (Visible when product selected) -->
+    <section id="product-details-card" class="card product-card hidden">
+      <div class="card-header">
+        <div>
+          <span class="badge badge-category" id="product-category">Category</span>
+          <h3 class="product-title" id="product-name">Product Name</h3>
+        </div>
+        <div class="msrp-badge">
+          <span class="msrp-label">Manufacturer MSRP</span>
+          <span class="msrp-value" id="product-msrp">$0</span>
+        </div>
+      </div>
+      <p class="product-desc" id="product-description">Description goes here</p>
+      
+      <!-- Specifications Grid -->
+      <div class="specs-grid" id="product-specs">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- Results Section: Single Dealer or All Dealers Comparison -->
+    <section id="pricing-results-section" class="results-section hidden">
+      <div class="section-title-row">
+        <h3 id="results-heading">Dealer Evaluation Results</h3>
+        <span class="count-badge" id="results-count">0 quotes</span>
+      </div>
+
+      <!-- Single Dealer View -->
+      <div id="single-dealer-container" class="hidden">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+
+      <!-- All Dealers Comparison View -->
+      <div id="all-dealers-container" class="hidden">
+        <!-- Rendered dynamically by script.js -->
+      </div>
+    </section>
+
+    <!-- Welcome / Empty State Placeholder -->
+    <section id="empty-state" class="empty-state">
+      <div class="empty-icon">🚗</div>
+      <h3>Welcome to Dealer Evaluation</h3>
+      <p>Choose a vehicle from the product dropdown above to start comparing dealer quotations, discounts, and inventory availability.</p>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div>
+        <strong>Dealer Evaluation Microservices Application</strong> • Final Project Lab
+      </div>
+      <div class="footer-meta">
+        <span>Backend 1: Python Flask (5000)</span>
+        <span>•</span>
+        <span>Backend 2: Node.js Express (5001)</span>
+        <span>•</span>
+        <span>Target: IBM Cloud Code Engine</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

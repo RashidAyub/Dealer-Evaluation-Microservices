@@ -1,0 +1,23 @@
+{
+  "name": "dealer-pricing-service",
+  "version": "1.0.0",
+  "description": "Dealer Pricing Microservice for Dealer Evaluation application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "microservices",
+    "express",
+    "pricing",
+    "dealer-evaluation",
+    "ibm-cloud"
+  ],
+  "author": "JavaScript Professional Certificate Student",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
